@@ -119,13 +119,13 @@ if ($pid) {
 	($verbose) && print "!! Running with PID: $$ (child: $pid)\n";
 
 	# only valid packets and non-empty SSIDs:
-	my $displayFilter = "wlan.fcs_good==1 and not wlan_mgt.ssid==\\\"\\\"";
+	my $displayFilter = "wlan.fcs.status==1 and not wlan_mgt.ssid==\\\"\\\"";
 	my $fieldParams = "-T fields -e wlan.sa -e wlan_mgt.ssid -Eseparator=,";
 	my $tsharkCommandLine = "$tsharkPath -i $interface -n -l $fieldParams";
 	if ($osname ne 'darwin') {
-		$tsharkCommandLine .= " subtype probereq -2 -R \"$displayFilter\" |";
+		$tsharkCommandLine .= " -Y \"$displayFilter\" subtype probereq|";
 	} else {
-		$tsharkCommandLine .= " -y PPI -2 -R \"wlan.fc.type_subtype==4 and $displayFilter\" |"
+		$tsharkCommandLine .= " -y PPI -Y \"wlan.fc.type_subtype==4 and $displayFilter\" |"
 	}
 	($verbose) && print "!! command: $tsharkCommandLine\n";
 
